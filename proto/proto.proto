@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "./proto";
+
+message User{
+    string id = 1;
+    string name = 2;
+}
+
+message Message{
+    string user_id = 1;
+    string content = 2;
+}
+
+message Connect {
+    User user = 1;
+}
+
+message Close{}
+
+service SecurityMedic{
+    rpc Join(Connect) returns (stream Message);
+    rpc Publish(Message) returns (Close);
+}
