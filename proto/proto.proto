@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package proto;
-option go_package = "securitymedic/";
+option go_package = "securitymedic/ ";
 
 message User{
     string id = 1;
@@ -13,13 +13,18 @@ message Message{
     string content = 2;
 }
 
-message Connect {
-    User user = 1;
+message Chunk{
+    string info = 1;
 }
 
-message Close{}
+message Response{
+    string message = 1;
+}
 
-service SecurityMedic{
-    rpc Join(Connect) returns (stream Message);
-    rpc Publish(Message) returns (Close);
+service SecretService{
+    rpc SendChonker(Chunk) returns (Response);
+}
+
+service HospitalService{
+    rpc SendChunk(Chunk) returns (Response);
 }

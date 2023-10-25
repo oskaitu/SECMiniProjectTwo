@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net"
@@ -12,7 +13,7 @@ import (
 )
 
 type Server struct {
-	proto.UnimplementedSecurityMedicServer
+	proto.UnimplementedHospitalServiceServer
 	name string
 	port int
 }
@@ -24,7 +25,7 @@ func main() {
 	flag.Parse()
 
 	server := &Server{
-		name: "Servername",
+		name: "Hospital",
 		port: *port,
 	}
 
@@ -46,11 +47,20 @@ func startServer(server *Server) {
 
 	log.Printf("Started server at port: %d/n", server.port)
 
-	proto.RegisterSecurityMedicServer(grpcServer, server)
+	proto.RegisterHospitalServiceServer(grpcServer, server)
 
 	serveError := grpcServer.Serve(listener)
 
 	if serveError != nil {
 		log.Fatalf("could not serve listener")
 	}
+}
+
+func (c *Server) SendChunk(ctx context.Context, in *proto.Chunk) (*proto.Response, error) {
+
+	log.Printf("Received: %v", in.Info)
+	return &proto.Response{
+		Message: "Hello",
+		}, nil
+
 }
