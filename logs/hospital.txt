@@ -1,0 +1,9 @@
+> go run main.go -port 0 -name "Hospital"
+Trying to dial: 5001
+Dialing: 5001
+Trying to dial: 5002
+Dialing: 5002
+Trying to dial: 5003
+Dialing: 5003
+I am the hospital
+Hospital: The total sum for all the patients is 60423

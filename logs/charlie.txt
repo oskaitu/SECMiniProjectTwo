@@ -1,0 +1,14 @@
+PS C:\Users\Oscar\Documents\ITU\5. semester\Security 1\Miniproject2\SECMiniProjectTwo> go run main.go -port 3 -name "Charlie"
+Trying to dial: 5000
+Dialing: 5000
+Trying to dial: 5001
+Dialing: 5001
+Trying to dial: 5002
+Dialing: 5002
+Enter number: 9347
+Sending: 9347
+I am Charlie, My share is 6863
+Response: response:"Sending 1284, to Alice"
+Response: response:"Sending 1200, to Bob"
+Charlie: Sending my sum to the hospital
+Response from hospital: Hospital: I got 15071 from Charlie

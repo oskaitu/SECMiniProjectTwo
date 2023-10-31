@@ -3,28 +3,21 @@ syntax = "proto3";
 package proto;
 option go_package = "securitymedic/ ";
 
-message User{
-    string id = 1;
-    string name = 2;
-}
-
 message Message{
-    string user_id = 1;
-    string content = 2;
+    int32 id = 1;
+    int32 content = 2;
 }
 
 message Chunk{
-    string info = 1;
+    int32 id = 1;
+    int32 chunk = 2;
 }
 
 message Response{
-    string message = 1;
+    string response = 1;
 }
 
 service SecretService{
     rpc SendChonker(Chunk) returns (Response);
-}
-
-service HospitalService{
-    rpc SendChunk(Chunk) returns (Response);
+    rpc SendResult(Message) returns (Response);
 }

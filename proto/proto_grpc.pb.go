@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SecretServiceClient interface {
 	SendChonker(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Response, error)
+	SendResult(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Response, error)
 }
 
 type secretServiceClient struct {
@@ -38,11 +39,21 @@ func (c *secretServiceClient) SendChonker(ctx context.Context, in *Chunk, opts .
 	return out, nil
 }
 
+func (c *secretServiceClient) SendResult(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/proto.SecretService/SendResult", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SecretServiceServer is the server API for SecretService service.
 // All implementations must embed UnimplementedSecretServiceServer
 // for forward compatibility
 type SecretServiceServer interface {
 	SendChonker(context.Context, *Chunk) (*Response, error)
+	SendResult(context.Context, *Message) (*Response, error)
 	mustEmbedUnimplementedSecretServiceServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedSecretServiceServer struct {
 
 func (UnimplementedSecretServiceServer) SendChonker(context.Context, *Chunk) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendChonker not implemented")
+}
+func (UnimplementedSecretServiceServer) SendResult(context.Context, *Message) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendResult not implemented")
 }
 func (UnimplementedSecretServiceServer) mustEmbedUnimplementedSecretServiceServer() {}
 
@@ -84,6 +98,24 @@ func _SecretService_SendChonker_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SecretService_SendResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecretServiceServer).SendResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.SecretService/SendResult",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecretServiceServer).SendResult(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SecretService_ServiceDesc is the grpc.ServiceDesc for SecretService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -95,91 +127,9 @@ var SecretService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SendChonker",
 			Handler:    _SecretService_SendChonker_Handler,
 		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/proto.proto",
-}
-
-// HospitalServiceClient is the client API for HospitalService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type HospitalServiceClient interface {
-	SendChunk(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Response, error)
-}
-
-type hospitalServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewHospitalServiceClient(cc grpc.ClientConnInterface) HospitalServiceClient {
-	return &hospitalServiceClient{cc}
-}
-
-func (c *hospitalServiceClient) SendChunk(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
-	err := c.cc.Invoke(ctx, "/proto.HospitalService/SendChunk", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// HospitalServiceServer is the server API for HospitalService service.
-// All implementations must embed UnimplementedHospitalServiceServer
-// for forward compatibility
-type HospitalServiceServer interface {
-	SendChunk(context.Context, *Chunk) (*Response, error)
-	mustEmbedUnimplementedHospitalServiceServer()
-}
-
-// UnimplementedHospitalServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedHospitalServiceServer struct {
-}
-
-func (UnimplementedHospitalServiceServer) SendChunk(context.Context, *Chunk) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendChunk not implemented")
-}
-func (UnimplementedHospitalServiceServer) mustEmbedUnimplementedHospitalServiceServer() {}
-
-// UnsafeHospitalServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to HospitalServiceServer will
-// result in compilation errors.
-type UnsafeHospitalServiceServer interface {
-	mustEmbedUnimplementedHospitalServiceServer()
-}
-
-func RegisterHospitalServiceServer(s grpc.ServiceRegistrar, srv HospitalServiceServer) {
-	s.RegisterService(&HospitalService_ServiceDesc, srv)
-}
-
-func _HospitalService_SendChunk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Chunk)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HospitalServiceServer).SendChunk(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.HospitalService/SendChunk",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HospitalServiceServer).SendChunk(ctx, req.(*Chunk))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// HospitalService_ServiceDesc is the grpc.ServiceDesc for HospitalService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var HospitalService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.HospitalService",
-	HandlerType: (*HospitalServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendChunk",
-			Handler:    _HospitalService_SendChunk_Handler,
+			MethodName: "SendResult",
+			Handler:    _SecretService_SendResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,0 +1,14 @@
+> go run main.go -port 2 -name "Bob"
+Trying to dial: 5000
+Dialing: 5000
+Trying to dial: 5001
+Dialing: 5001
+Trying to dial: 5003
+Dialing: 5003
+Enter number: 7643
+Sending: 7643
+I am Bob, My share is 1674
+Response: response:"Sending 2113, to Alice"
+Response: response:"Sending 3856, to Charlie"
+Bob: Sending my sum to the hospital
+Response from hospital: Hospital: I got 6761 from Bob
